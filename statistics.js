@@ -27,4 +27,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     historyList.appendChild(item);
   });
+   const totalMinutes = Math.floor(totalSeconds / 60);
+
+  const totalDiv = document.createElement("div");
+  totalDiv.classList.add("total-time");
+
+  totalDiv.innerHTML = `
+    <h2>🧮 総合計時間</h2>
+    <p>${totalMinutes} 分</p>
+  `;
+
+  historyList.appendChild(totalDiv);
 });
