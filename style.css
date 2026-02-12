@@ -113,12 +113,16 @@ body.break { background: #065f46; }
   gap: 15px;
 }
 
-.modal-content input {
-  padding: 8px;
-  margin-top: 5px;
+/* モード切替時に文字を白くする */
+body.work, body.break {
+  color: white;
+  transition: 0.5s ease;
 }
 
-.modal-buttons {
-  display: flex;
-  justify-content: space-between;
+body.work .container, body.break .container {
+  color: #333; /* カードの中身は読みやすく黒系のまま */
 }
+
+/* 休憩モードの背景を少し明るめの緑に（お好みで） */
+body.break { background-color: #2d6a4f; }
+body.work { background-color: #1a75ff; }
