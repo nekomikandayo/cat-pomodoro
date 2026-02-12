@@ -71,6 +71,7 @@ function saveData() {
 
 // ===== モード切替 =====
 function switchMode() {
+  alarmSound.play();
   if (mode === "work") {
     sessionCount++;
     totalFocusTime += WORK_TIME;
