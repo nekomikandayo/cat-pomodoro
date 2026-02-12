@@ -95,11 +95,16 @@ function switchMode() {
   const wasRunning = isRunning;
   
   if (mode === "work") {
-    sessionCount++;
-    totalFocusTime += WORK_TIME / 60;
-    mode = "break";
-    timeLeft = BREAK_TIME;
-  } else {
+  sessionCount++;
+
+  totalFocusTime += WORK_TIME / 60;
+
+  // 🔥 追加：日付ごとの保存（秒で保存）
+  saveDailyFocus(WORK_TIME);
+
+  mode = "break";
+  timeLeft = BREAK_TIME;
+} else {
     mode = "work";
     timeLeft = WORK_TIME;
   }
@@ -168,6 +173,20 @@ function updateSessionDisplay() {
 
 function updateTotalTimeDisplay() { 
   totalTimeEl.textContent = Math.floor(totalFocusTime); 
+}
+
+function saveDailyFocus(seconds) {
+  const today = new Date().toISOString().split("T")[0];
+
+  const history = JSON.parse(localStorage.getItem("focusHistory")) || {};
+
+  if (!history[today]) {
+    history[today] = 0;
+  }
+
+  history[today] += seconds;
+
+  localStorage.setItem("focusHistory", JSON.stringify(history));
 }
 
 // ===== イベント登録 =====
