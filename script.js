@@ -7,6 +7,10 @@ let timeLeft = WORK_TIME;
 let timerId = null;
 let isRunning = false;
 
+const WORK_IMAGE_PATH = "data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='80'%3E💻%3C/text%3E%3Ctext y='70' x='20' font-size='50'%3E🐱%3C/text%3E%3C/svg%3E"; // 集中モード：パソコンと猫
+
+const BREAK_IMAGE_PATH = "data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cstyle%3E .stretch %7B animation: stretch-anim 1.5s ease-in-out infinite alternate; transform-origin: bottom; %7D @keyframes stretch-anim %7B from %7B transform: scaleX(1); %7D to %7B transform: scaleX(1.3) skewX(-10deg); %7D %7D %3C/style%3E%3Ctext y='80' font-size='80' class='stretch'%3E🐈%3C/text%3E%3C/svg%3E"; // 休憩モード：伸びる猫（アニメーション付）
+
 // 音声ファイルの読み込み（ファイルが同じフォルダにあるか確認してくださいね！）
 const alarmSound = new Audio("お知らせベル.mp3");
 
