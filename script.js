@@ -7,6 +7,7 @@ let timeLeft = WORK_TIME;
 let timerId = null;
 let isRunning = false;
 
+// 音声ファイルの読み込み（ファイルが同じフォルダにあるか確認してくださいね！）
 const alarmSound = new Audio("お知らせベル.mp3");
 
 // ===== 保存データ読み込み =====
@@ -17,6 +18,7 @@ let totalFocusTime = Number(localStorage.getItem("catPomodoro_totalTime")) || 0;
 const minutesEl = document.getElementById("minutes");
 const secondsEl = document.getElementById("seconds");
 const startBtn = document.getElementById("startBtn");
+const pauseBtn = document.getElementById("pauseBtn");
 const resetBtn = document.getElementById("resetBtn");
 const modeDisplay = document.getElementById("modeDisplay");
 const sessionEl = document.getElementById("sessionCount");
@@ -28,76 +30,25 @@ const workInput = document.getElementById("workInput");
 const breakInput = document.getElementById("breakInput");
 const saveSettingsBtn = document.getElementById("saveSettings");
 const closeModalBtn = document.getElementById("closeModal");
-const pauseBtn = document.getElementById("pauseBtn");
-
 
 // ===== 表示更新 =====
 function updateDisplay() {
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
-
   minutesEl.textContent = String(minutes).padStart(2, "0");
   secondsEl.textContent = String(seconds).padStart(2, "0");
 }
 
 function updateModeDisplay() {
   modeDisplay.textContent = mode === "work" ? "集中モード" : "休憩モード";
-
   document.body.classList.remove("work", "break");
   document.body.classList.add(mode);
 }
 
-function updateSessionDisplay() {
-  sessionEl.textContent = sessionCount;
-}
-
-function updateTotalTimeDisplay() {
-  totalTimeEl.textContent = Math.floor(totalFocusTime / 60);
-}
-
-// ===== 現在時刻表示 =====
-function updateClock() {
-  const now = new Date();
-  const hours = String(now.getHours()).padStart(2, "0");
-  const minutes = String(now.getMinutes()).padStart(2, "0");
-
-  currentTimeEl.textContent = `${hours}:${minutes}`;
-}
-
-// ===== データ保存 =====
-function saveData() {
-  localStorage.setItem("catPomodoro_sessionCount", sessionCount);
-  localStorage.setItem("catPomodoro_totalTime", totalFocusTime);
-}
-
-// ===== モード切替 =====
-function switchMode() {
-  alarmSound.play();
-  if (mode === "work") {
-    sessionCount++;
-    totalFocusTime += WORK_TIME;
-
-    saveData();
-    updateSessionDisplay();
-    updateTotalTimeDisplay();
-
-    mode = "break";
-    timeLeft = BREAK_TIME;
-  } else {
-    mode = "work";
-    timeLeft = WORK_TIME;
-  }
-
-  updateModeDisplay();
-  updateDisplay();
-}
-
-// ===== タイマー開始 =====
+// ===== タイマー制御 =====
 function startTimer() {
   if (isRunning) return;
-
   isRunning = true;
-
   timerId = setInterval(() => {
     if (timeLeft > 0) {
       timeLeft--;
@@ -109,97 +60,91 @@ function startTimer() {
   pauseBtn.textContent = "Pause";
 }
 
-// ===== リセット =====
+function pauseTimer() {
+  if (isRunning) {
+    // 停止処理
+    clearInterval(timerId);
+    isRunning = false;
+    pauseBtn.textContent = "Resume";
+  } else if (timeLeft < (mode === "work" ? WORK_TIME : BREAK_TIME)) {
+    // 再開処理（時間が進んでいる場合のみ）
+    startTimer();
+  }
+}
+
 function resetTimer() {
   clearInterval(timerId);
   isRunning = false;
   mode = "work";
   timeLeft = WORK_TIME;
-
+  pauseBtn.textContent = "Pause";
   updateModeDisplay();
   updateDisplay();
-  pauseBtn.textContent = "Pause";
 }
 
-function openSettings() {
-  const newWork = prompt("作業時間（分）を入力してください", WORK_TIME / 60);
-  const newBreak = prompt("休憩時間（分）を入力してください", BREAK_TIME / 60);
-
-  if (newWork !== null && newBreak !== null) {
-    WORK_TIME = Number(newWork) * 60;
-    BREAK_TIME = Number(newBreak) * 60;
-
-    localStorage.setItem("catPomodoro_workTime", WORK_TIME);
-    localStorage.setItem("catPomodoro_breakTime", BREAK_TIME);
-
-    // 現在work中なら反映
-    if (mode === "work") {
-      timeLeft = WORK_TIME;
-    } else {
-      timeLeft = BREAK_TIME;
-    }
-
-    updateDisplay();
-    alert("設定を保存しました 🐱");
+function switchMode() {
+  alarmSound.play().catch(e => console.log("音声再生に失敗しました（ユーザー操作が必要です）"));
+  
+  if (mode === "work") {
+    sessionCount++;
+    totalFocusTime += WORK_TIME / 60; // 分単位で加算
+    mode = "break";
+    timeLeft = BREAK_TIME;
+  } else {
+    mode = "work";
+    timeLeft = WORK_TIME;
   }
+  
+  saveData();
+  updateSessionDisplay();
+  updateTotalTimeDisplay();
+  updateModeDisplay();
+  updateDisplay();
 }
 
+// ===== モーダル関連 =====
 function openSettingsModal() {
   workInput.value = WORK_TIME / 60;
   breakInput.value = BREAK_TIME / 60;
   modal.classList.remove("hidden");
 }
 
-function closeSettingsModal() {
-  modal.classList.add("hidden");
-}
-
 function saveSettings() {
   WORK_TIME = Number(workInput.value) * 60;
   BREAK_TIME = Number(breakInput.value) * 60;
-
   localStorage.setItem("catPomodoro_workTime", WORK_TIME);
   localStorage.setItem("catPomodoro_breakTime", BREAK_TIME);
-
-  timeLeft = mode === "work" ? WORK_TIME : BREAK_TIME;
-  updateDisplay();
-
-  closeSettingsModal();
+  
+  resetTimer(); // 設定変更時はリセット
+  modal.classList.add("hidden");
 }
 
-function pauseTimer() {
-  if (!isRunning) return;
-
-  clearInterval(timerId);
-  isRunning = false;
+// ===== その他更新系 =====
+function updateClock() {
+  const now = new Date();
+  currentTimeEl.textContent = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
 }
 
-function pauseTimer() {
-  if (isRunning) {
-    clearInterval(timerId);
-    isRunning = false;
-    pauseBtn.textContent = "Resume";
-  } else {
-    startTimer();
-    pauseBtn.textContent = "Pause";
-  }
+function saveData() {
+  localStorage.setItem("catPomodoro_sessionCount", sessionCount);
+  localStorage.setItem("catPomodoro_totalTime", totalFocusTime);
 }
+
+function updateSessionDisplay() { sessionEl.textContent = sessionCount; }
+function updateTotalTimeDisplay() { totalTimeEl.textContent = Math.floor(totalFocusTime); }
 
 // ===== イベント登録 =====
 startBtn.addEventListener("click", startTimer);
-resetBtn.addEventListener("click", resetTimer);
-settingBtn.addEventListener("click", openSettings);
-settingBtn.addEventListener("click", openSettingsModal);
-closeModalBtn.addEventListener("click", closeSettingsModal);
-saveSettingsBtn.addEventListener("click", saveSettings);
 pauseBtn.addEventListener("click", pauseTimer);
+resetBtn.addEventListener("click", resetTimer);
+settingBtn.addEventListener("click", openSettingsModal);
+closeModalBtn.addEventListener("click", () => modal.classList.add("hidden"));
+saveSettingsBtn.addEventListener("click", saveSettings);
 
-// ===== 初期表示 =====
+// 初期起動
 updateDisplay();
 updateModeDisplay();
 updateSessionDisplay();
 updateTotalTimeDisplay();
-updateClock();
-
-// 1秒ごとに現在時刻更新
 setInterval(updateClock, 1000);
+updateClock();
