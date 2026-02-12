@@ -28,6 +28,7 @@ const workInput = document.getElementById("workInput");
 const breakInput = document.getElementById("breakInput");
 const saveSettingsBtn = document.getElementById("saveSettings");
 const closeModalBtn = document.getElementById("closeModal");
+const pauseBtn = document.getElementById("pauseBtn");
 
 
 // ===== 表示更新 =====
@@ -105,6 +106,7 @@ function startTimer() {
       switchMode();
     }
   }, 1000);
+  pauseBtn.textContent = "Pause";
 }
 
 // ===== リセット =====
@@ -116,6 +118,7 @@ function resetTimer() {
 
   updateModeDisplay();
   updateDisplay();
+  pauseBtn.textContent = "Pause";
 }
 
 function openSettings() {
@@ -164,6 +167,24 @@ function saveSettings() {
   closeSettingsModal();
 }
 
+function pauseTimer() {
+  if (!isRunning) return;
+
+  clearInterval(timerId);
+  isRunning = false;
+}
+
+function pauseTimer() {
+  if (isRunning) {
+    clearInterval(timerId);
+    isRunning = false;
+    pauseBtn.textContent = "Resume";
+  } else {
+    startTimer();
+    pauseBtn.textContent = "Pause";
+  }
+}
+
 // ===== イベント登録 =====
 startBtn.addEventListener("click", startTimer);
 resetBtn.addEventListener("click", resetTimer);
@@ -171,6 +192,7 @@ settingBtn.addEventListener("click", openSettings);
 settingBtn.addEventListener("click", openSettingsModal);
 closeModalBtn.addEventListener("click", closeSettingsModal);
 saveSettingsBtn.addEventListener("click", saveSettings);
+pauseBtn.addEventListener("click", pauseTimer);
 
 // ===== 初期表示 =====
 updateDisplay();
