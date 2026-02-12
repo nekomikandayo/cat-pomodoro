@@ -85,14 +85,7 @@ button:active {
   background-color: #ddd;
 }
 
-/* ===== モード別背景 ===== */
-body.work {
-  background-color: #1e3a8a;
-  transition: background-color 0.5s ease;
-}
 
-body.break {
-  background-color: #065f46;
-  transition: background-color 0.5s ease;
-}
+body.work { background: #1e3a8a; }
+body.break { background: #065f46; }
 
