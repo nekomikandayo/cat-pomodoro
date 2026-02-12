@@ -126,3 +126,21 @@ body.work .container, body.break .container {
 /* 休憩モードの背景を少し明るめの緑に（お好みで） */
 body.break { background-color: #2d6a4f; }
 body.work { background-color: #1a75ff; }
+
+.cat-container {
+  width: 200px;
+  height: 150px;
+  margin: 10px auto 20px;
+  background: #f0f0f0; /* 薄いグレーの背景 */
+  border-radius: 50% 50% 10% 10%; /* 丸みをつけて座布団っぽく */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 4px solid #ddd;
+}
+
+#catImage {
+  width: 120px;
+  height: 120px;
+  transition: all 0.5s ease;
+}
