@@ -1,6 +1,6 @@
 // ===== 初期設定 =====
-let WORK_TIME = 1500;
-let BREAK_TIME = 300;
+const WORK_TIME = 1500;
+const BREAK_TIME = 300;
 
 let mode = "work";
 let timeLeft = WORK_TIME;
@@ -19,6 +19,7 @@ const resetBtn = document.getElementById("resetBtn");
 const modeDisplay = document.getElementById("modeDisplay");
 const sessionEl = document.getElementById("sessionCount");
 const totalTimeEl = document.getElementById("totalTime");
+const currentTimeEl = document.getElementById("currentTime");
 
 // ===== 表示更新 =====
 function updateDisplay() {
@@ -31,6 +32,9 @@ function updateDisplay() {
 
 function updateModeDisplay() {
   modeDisplay.textContent = mode === "work" ? "集中モード" : "休憩モード";
+
+  document.body.classList.remove("work", "break");
+  document.body.classList.add(mode);
 }
 
 function updateSessionDisplay() {
@@ -39,6 +43,15 @@ function updateSessionDisplay() {
 
 function updateTotalTimeDisplay() {
   totalTimeEl.textContent = Math.floor(totalFocusTime / 60);
+}
+
+// ===== 現在時刻表示 =====
+function updateClock() {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+
+  currentTimeEl.textContent = `${hours}:${minutes}`;
 }
 
 // ===== データ保存 =====
@@ -104,3 +117,7 @@ updateDisplay();
 updateModeDisplay();
 updateSessionDisplay();
 updateTotalTimeDisplay();
+updateClock();
+
+// 1秒ごとに現在時刻更新
+setInterval(updateClock, 1000);
