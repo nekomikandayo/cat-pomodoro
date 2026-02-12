@@ -1,6 +1,6 @@
 // ===== 初期設定 =====
-const WORK_TIME = 1500;
-const BREAK_TIME = 300;
+let WORK_TIME = Number(localStorage.getItem("catPomodoro_workTime")) || 1500;
+let BREAK_TIME = Number(localStorage.getItem("catPomodoro_breakTime")) || 300;
 
 let mode = "work";
 let timeLeft = WORK_TIME;
@@ -20,6 +20,7 @@ const modeDisplay = document.getElementById("modeDisplay");
 const sessionEl = document.getElementById("sessionCount");
 const totalTimeEl = document.getElementById("totalTime");
 const currentTimeEl = document.getElementById("currentTime");
+const settingBtn = document.getElementById("settingBtn");
 
 // ===== 表示更新 =====
 function updateDisplay() {
@@ -108,9 +109,33 @@ function resetTimer() {
   updateDisplay();
 }
 
+function openSettings() {
+  const newWork = prompt("作業時間（分）を入力してください", WORK_TIME / 60);
+  const newBreak = prompt("休憩時間（分）を入力してください", BREAK_TIME / 60);
+
+  if (newWork !== null && newBreak !== null) {
+    WORK_TIME = Number(newWork) * 60;
+    BREAK_TIME = Number(newBreak) * 60;
+
+    localStorage.setItem("catPomodoro_workTime", WORK_TIME);
+    localStorage.setItem("catPomodoro_breakTime", BREAK_TIME);
+
+    // 現在work中なら反映
+    if (mode === "work") {
+      timeLeft = WORK_TIME;
+    } else {
+      timeLeft = BREAK_TIME;
+    }
+
+    updateDisplay();
+    alert("設定を保存しました 🐱");
+  }
+}
+
 // ===== イベント登録 =====
 startBtn.addEventListener("click", startTimer);
 resetBtn.addEventListener("click", resetTimer);
+settingBtn.addEventListener("click", openSettings);
 
 // ===== 初期表示 =====
 updateDisplay();
