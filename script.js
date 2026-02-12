@@ -7,6 +7,8 @@ let timeLeft = WORK_TIME;
 let timerId = null;
 let isRunning = false;
 
+const alarmSound = new Audio("お知らせベル.mp3");
+
 // ===== 保存データ読み込み =====
 let sessionCount = Number(localStorage.getItem("catPomodoro_sessionCount")) || 0;
 let totalFocusTime = Number(localStorage.getItem("catPomodoro_totalTime")) || 0;
