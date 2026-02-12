@@ -47,6 +47,11 @@ function updateModeDisplay() {
   modeDisplay.textContent = mode === "work" ? "集中モード" : "休憩モード";
   document.body.classList.remove("work", "break");
   document.body.classList.add(mode);
+
+  const catImageEl = document.getElementById("catImage");
+  if (catImageEl) {
+    catImageEl.src = mode === "work" ? WORK_IMAGE_PATH : BREAK_IMAGE_PATH;
+  }
 }
 
 // ===== タイマー制御 =====
