@@ -1,12 +1,15 @@
 // ===== 初期設定 =====
-let WORK_TIME = 1500;   // 25分
-let BREAK_TIME = 300;   // 5分
+let WORK_TIME = 1500;
+let BREAK_TIME = 300;
 
+let mode = "work";
 let timeLeft = WORK_TIME;
 let timerId = null;
 let isRunning = false;
-let mode = "work"; // "work" or "break"
-let sessionCount = 0;
+
+// ===== 保存データ読み込み =====
+let sessionCount = Number(localStorage.getItem("catPomodoro_sessionCount")) || 0;
+let totalFocusTime = Number(localStorage.getItem("catPomodoro_totalTime")) || 0;
 
 // ===== 要素取得 =====
 const minutesEl = document.getElementById("minutes");
@@ -15,6 +18,7 @@ const startBtn = document.getElementById("startBtn");
 const resetBtn = document.getElementById("resetBtn");
 const modeDisplay = document.getElementById("modeDisplay");
 const sessionEl = document.getElementById("sessionCount");
+const totalTimeEl = document.getElementById("totalTime");
 
 // ===== 表示更新 =====
 function updateDisplay() {
@@ -25,20 +29,33 @@ function updateDisplay() {
   secondsEl.textContent = String(seconds).padStart(2, "0");
 }
 
-// ===== モード表示更新 =====
 function updateModeDisplay() {
-  if (mode === "work") {
-    modeDisplay.textContent = "集中モード";
-  } else {
-    modeDisplay.textContent = "休憩モード";
-  }
+  modeDisplay.textContent = mode === "work" ? "集中モード" : "休憩モード";
+}
+
+function updateSessionDisplay() {
+  sessionEl.textContent = sessionCount;
+}
+
+function updateTotalTimeDisplay() {
+  totalTimeEl.textContent = Math.floor(totalFocusTime / 60);
+}
+
+// ===== データ保存 =====
+function saveData() {
+  localStorage.setItem("catPomodoro_sessionCount", sessionCount);
+  localStorage.setItem("catPomodoro_totalTime", totalFocusTime);
 }
 
 // ===== モード切替 =====
 function switchMode() {
   if (mode === "work") {
-    sessionCount++; // 作業終了時のみ加算
-    sessionEl.textContent = sessionCount;
+    sessionCount++;
+    totalFocusTime += WORK_TIME;
+
+    saveData();
+    updateSessionDisplay();
+    updateTotalTimeDisplay();
 
     mode = "break";
     timeLeft = BREAK_TIME;
@@ -73,6 +90,7 @@ function resetTimer() {
   isRunning = false;
   mode = "work";
   timeLeft = WORK_TIME;
+
   updateModeDisplay();
   updateDisplay();
 }
@@ -81,6 +99,8 @@ function resetTimer() {
 startBtn.addEventListener("click", startTimer);
 resetBtn.addEventListener("click", resetTimer);
 
-// 初期表示
+// ===== 初期表示 =====
 updateDisplay();
 updateModeDisplay();
+updateSessionDisplay();
+updateTotalTimeDisplay();
