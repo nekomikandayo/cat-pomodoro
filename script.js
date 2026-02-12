@@ -21,6 +21,12 @@ const sessionEl = document.getElementById("sessionCount");
 const totalTimeEl = document.getElementById("totalTime");
 const currentTimeEl = document.getElementById("currentTime");
 const settingBtn = document.getElementById("settingBtn");
+const modal = document.getElementById("settingsModal");
+const workInput = document.getElementById("workInput");
+const breakInput = document.getElementById("breakInput");
+const saveSettingsBtn = document.getElementById("saveSettings");
+const closeModalBtn = document.getElementById("closeModal");
+
 
 // ===== 表示更新 =====
 function updateDisplay() {
@@ -132,10 +138,36 @@ function openSettings() {
   }
 }
 
+function openSettingsModal() {
+  workInput.value = WORK_TIME / 60;
+  breakInput.value = BREAK_TIME / 60;
+  modal.classList.remove("hidden");
+}
+
+function closeSettingsModal() {
+  modal.classList.add("hidden");
+}
+
+function saveSettings() {
+  WORK_TIME = Number(workInput.value) * 60;
+  BREAK_TIME = Number(breakInput.value) * 60;
+
+  localStorage.setItem("catPomodoro_workTime", WORK_TIME);
+  localStorage.setItem("catPomodoro_breakTime", BREAK_TIME);
+
+  timeLeft = mode === "work" ? WORK_TIME : BREAK_TIME;
+  updateDisplay();
+
+  closeSettingsModal();
+}
+
 // ===== イベント登録 =====
 startBtn.addEventListener("click", startTimer);
 resetBtn.addEventListener("click", resetTimer);
 settingBtn.addEventListener("click", openSettings);
+settingBtn.addEventListener("click", openSettingsModal);
+closeModalBtn.addEventListener("click", closeSettingsModal);
+saveSettingsBtn.addEventListener("click", saveSettings);
 
 // ===== 初期表示 =====
 updateDisplay();
