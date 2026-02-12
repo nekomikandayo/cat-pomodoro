@@ -218,3 +218,33 @@ body.break .container {
   border-radius: 8px;
   margin-top: 20px;
 }
+
+.history-item {
+  background: white;
+  padding: 15px;
+  margin: 12px 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  text-align: left;
+}
+
+.history-item strong {
+  font-size: 16px;
+}
+
+.history-item p {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 5px 0 0;
+}
+
+.back-btn {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 16px;
+  background: #555;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+}
+
