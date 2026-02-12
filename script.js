@@ -1,13 +1,20 @@
 // ===== 初期設定 =====
-let timeLeft = 1500; // 25分（秒）
+let WORK_TIME = 1500;   // 25分
+let BREAK_TIME = 300;   // 5分
+
+let timeLeft = WORK_TIME;
 let timerId = null;
 let isRunning = false;
+let mode = "work"; // "work" or "break"
+let sessionCount = 0;
 
 // ===== 要素取得 =====
 const minutesEl = document.getElementById("minutes");
 const secondsEl = document.getElementById("seconds");
 const startBtn = document.getElementById("startBtn");
 const resetBtn = document.getElementById("resetBtn");
+const modeDisplay = document.getElementById("modeDisplay");
+const sessionEl = document.getElementById("sessionCount");
 
 // ===== 表示更新 =====
 function updateDisplay() {
@@ -16,6 +23,32 @@ function updateDisplay() {
 
   minutesEl.textContent = String(minutes).padStart(2, "0");
   secondsEl.textContent = String(seconds).padStart(2, "0");
+}
+
+// ===== モード表示更新 =====
+function updateModeDisplay() {
+  if (mode === "work") {
+    modeDisplay.textContent = "集中モード";
+  } else {
+    modeDisplay.textContent = "休憩モード";
+  }
+}
+
+// ===== モード切替 =====
+function switchMode() {
+  if (mode === "work") {
+    sessionCount++; // 作業終了時のみ加算
+    sessionEl.textContent = sessionCount;
+
+    mode = "break";
+    timeLeft = BREAK_TIME;
+  } else {
+    mode = "work";
+    timeLeft = WORK_TIME;
+  }
+
+  updateModeDisplay();
+  updateDisplay();
 }
 
 // ===== タイマー開始 =====
@@ -29,9 +62,7 @@ function startTimer() {
       timeLeft--;
       updateDisplay();
     } else {
-      clearInterval(timerId);
-      isRunning = false;
-      alert("25分終了！🐱");
+      switchMode();
     }
   }, 1000);
 }
@@ -40,7 +71,9 @@ function startTimer() {
 function resetTimer() {
   clearInterval(timerId);
   isRunning = false;
-  timeLeft = 1500;
+  mode = "work";
+  timeLeft = WORK_TIME;
+  updateModeDisplay();
   updateDisplay();
 }
 
@@ -50,3 +83,4 @@ resetBtn.addEventListener("click", resetTimer);
 
 // 初期表示
 updateDisplay();
+updateModeDisplay();
