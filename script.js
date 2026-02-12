@@ -94,20 +94,19 @@ function switchMode() {
   
   const wasRunning = isRunning;
   
-  if (mode === "work") {
+if (mode === "work") {
   sessionCount++;
-
   totalFocusTime += WORK_TIME / 60;
-
-  // 🔥 追加：日付ごとの保存（秒で保存）
+  
+  // 日付ごとの保存（秒で保存）
   saveDailyFocus(WORK_TIME);
-
+  
   mode = "break";
   timeLeft = BREAK_TIME;
 } else {
-    mode = "work";
-    timeLeft = WORK_TIME;
-  }
+  mode = "work";
+  timeLeft = WORK_TIME;
+}
   
   saveData();
   updateSessionDisplay();
