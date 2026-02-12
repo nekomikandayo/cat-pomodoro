@@ -1,3 +1,4 @@
+/* ===== 基本スタイル ===== */
 body {
   margin: 0;
   font-family: "Segoe UI", "Helvetica Neue", sans-serif;
@@ -5,7 +6,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
+  transition: background 0.5s ease;
 }
 
 .container {
@@ -15,31 +17,58 @@ body {
   text-align: center;
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  color: #333;
 }
 
 h1 {
   margin-bottom: 10px;
   font-size: 22px;
+  color: #333;
 }
 
+/* ===== 猫の画像エリア ===== */
+.cat-container {
+  width: 200px;
+  height: 200px;
+  margin: 10px auto 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  border-radius: 0;
+  border-bottom: none;
+}
+
+#catImage {
+  width: 180px;
+  height: auto;
+  max-height: 180px;
+  transition: all 0.5s ease;
+  object-fit: contain;
+}
+
+/* ===== 時刻・タイマー表示 ===== */
 .current-time {
   font-size: 14px;
   color: #777;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .timer-display {
   font-size: 48px;
   font-weight: bold;
   margin: 20px 0;
+  color: #333;
 }
 
 .mode-display {
   margin-bottom: 20px;
   font-weight: 500;
   color: #ff6b6b;
+  font-size: 18px;
 }
 
+/* ===== ボタン ===== */
 .button-group {
   display: flex;
   justify-content: center;
@@ -54,6 +83,7 @@ button {
   cursor: pointer;
   font-weight: 500;
   transition: 0.2s ease;
+  font-size: 14px;
 }
 
 #startBtn {
@@ -61,9 +91,19 @@ button {
   color: white;
 }
 
+#pauseBtn {
+  background-color: #2196F3;
+  color: white;
+}
+
 #resetBtn {
   background-color: #f44336;
   color: white;
+}
+
+#settingBtn {
+  background-color: #ddd;
+  color: #333;
 }
 
 button:hover {
@@ -75,28 +115,26 @@ button:active {
   transform: scale(0.95);
 }
 
+/* ===== セッション情報 ===== */
 .session-info {
   font-size: 14px;
   color: #555;
   margin-bottom: 20px;
 }
 
-#settingBtn {
-  background-color: #ddd;
+.session-info p {
+  margin: 5px 0;
 }
-
-
-body.work { background: #1e3a8a; }
-body.break { background: #065f46; }
 
 /* ===== モーダル ===== */
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 
 .modal.hidden {
@@ -113,53 +151,53 @@ body.break { background: #065f46; }
   gap: 15px;
 }
 
-/* モード切替時に文字を白くする */
-body.work, body.break {
+.modal-content h2 {
+  margin: 0 0 10px 0;
+  font-size: 20px;
+  color: #333;
+}
+
+.modal-content label {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  font-size: 14px;
+  color: #555;
+  gap: 5px;
+}
+
+.modal-content input {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.modal-buttons button {
+  padding: 8px 16px;
+}
+
+/* ===== モード別背景色 ===== */
+body.work {
+  background: linear-gradient(135deg, #1a75ff, #4da3ff);
+}
+
+body.break {
+  background: linear-gradient(135deg, #2d6a4f, #52b788);
+}
+
+body.work,
+body.break {
   color: white;
-  transition: 0.5s ease;
 }
 
-body.work .container, body.break .container {
-  color: #333; /* カードの中身は読みやすく黒系のまま */
-}
-
-/* 休憩モードの背景を少し明るめの緑に（お好みで） */
-body.break { background-color: #2d6a4f; }
-body.work { background-color: #1a75ff; }
-
-.cat-container {
-  width: 200px;
-  height: 150px;
-  margin: 10px auto 20px;
-  background: #f0f0f0; /* 薄いグレーの背景 */
-  border-radius: 50% 50% 10% 10%; /* 丸みをつけて座布団っぽく */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-bottom: 4px solid #ddd;
-}
-
-#catImage {
-  width: 120px;
-  height: 120px;
-  transition: all 0.5s ease;
-}
-
-.cat-container {
-  width: 200px;
-  height: 150px;
-  margin: 10px auto 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: transparent; /* 背景を透明に */
-  border-radius: 0; /* 角丸を削除 */
-  border-bottom: none; /* 下線を削除 */
-}
-
-#catImage {
-  width: 180px; /* 画像サイズ調整 */
-  height: auto;
-  transition: all 0.5s ease;
-  object-fit: contain; /* アスペクト比を保持 */
+body.work .container,
+body.break .container {
+  color: #333;
 }
