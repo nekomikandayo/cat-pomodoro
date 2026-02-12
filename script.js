@@ -7,11 +7,9 @@ let timeLeft = WORK_TIME;
 let timerId = null;
 let isRunning = false;
 
-const WORK_IMAGE_PATH = "data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='80'%3E💻%3C/text%3E%3Ctext y='70' x='20' font-size='50'%3E🐱%3C/text%3E%3C/svg%3E"; // 集中モード：パソコンと猫
+const WORK_IMAGE_PATH = "data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='80' font-size='80'%3E💻%3C/text%3E%3Ctext y='70' x='20' font-size='50'%3E🐱%3C/text%3E%3C/svg%3E";
+const BREAK_IMAGE_PATH = "data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cstyle%3E .stretch %7B animation: stretch-anim 1.5s ease-in-out infinite alternate; transform-origin: bottom; %7D @keyframes stretch-anim %7B from %7B transform: scaleX(1); %7D to %7B transform: scaleX(1.3) skewX(-10deg); %7D %7D %3C/style%3E%3Ctext y='80' font-size='80' class='stretch'%3E🐈%3C/text%3E%3C/svg%3E";
 
-const BREAK_IMAGE_PATH = "data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cstyle%3E .stretch %7B animation: stretch-anim 1.5s ease-in-out infinite alternate; transform-origin: bottom; %7D @keyframes stretch-anim %7B from %7B transform: scaleX(1); %7D to %7B transform: scaleX(1.3) skewX(-10deg); %7D %7D %3C/style%3E%3Ctext y='80' font-size='80' class='stretch'%3E🐈%3C/text%3E%3C/svg%3E"; // 休憩モード：伸びる猫（アニメーション付）
-
-// 音声ファイルの読み込み（ファイルが同じフォルダにあるか確認してくださいね！）
 const alarmSound = new Audio("お知らせベル.mp3");
 
 // ===== 保存データ読み込み =====
@@ -71,12 +69,10 @@ function startTimer() {
 
 function pauseTimer() {
   if (isRunning) {
-    // 停止処理
     clearInterval(timerId);
     isRunning = false;
     pauseBtn.textContent = "Resume";
   } else if (timeLeft < (mode === "work" ? WORK_TIME : BREAK_TIME)) {
-    // 再開処理（時間が進んでいる場合のみ）
     startTimer();
   }
 }
@@ -92,11 +88,13 @@ function resetTimer() {
 }
 
 function switchMode() {
-  alarmSound.play().catch(e => console.log("音声再生に失敗しました（ユーザー操作が必要です）"));
+  alarmSound.play().catch(e => console.log("音声再生に失敗しました"));
+  
+  const wasRunning = isRunning; // 🔥 実行状態を保存
   
   if (mode === "work") {
     sessionCount++;
-    totalFocusTime += WORK_TIME / 60; // 分単位で加算
+    totalFocusTime += WORK_TIME / 60;
     mode = "break";
     timeLeft = BREAK_TIME;
   } else {
@@ -109,6 +107,13 @@ function switchMode() {
   updateTotalTimeDisplay();
   updateModeDisplay();
   updateDisplay();
+
+  // 🔥 実行中だった場合のみ自動再開
+  if (wasRunning) {
+    clearInterval(timerId);
+    isRunning = false;
+    startTimer();
+  }
 }
 
 // ===== モーダル関連 =====
@@ -124,7 +129,7 @@ function saveSettings() {
   localStorage.setItem("catPomodoro_workTime", WORK_TIME);
   localStorage.setItem("catPomodoro_breakTime", BREAK_TIME);
   
-  resetTimer(); // 設定変更時はリセット
+  resetTimer();
   modal.classList.add("hidden");
 }
 
@@ -139,6 +144,20 @@ function saveData() {
   localStorage.setItem("catPomodoro_totalTime", totalFocusTime);
 }
 
+// 🔥 日付リセット関数（今日の統計をリセット）
+function resetDailyStats() {
+  const today = new Date().toDateString();
+  const lastDate = localStorage.getItem("catPomodoro_lastDate");
+  
+  if (lastDate !== today) {
+    totalFocusTime = 0;
+    sessionCount = 0; // セッション回数もリセットする場合
+    localStorage.setItem("catPomodoro_lastDate", today);
+    localStorage.setItem("catPomodoro_totalTime", 0);
+    localStorage.setItem("catPomodoro_sessionCount", 0);
+  }
+}
+
 function updateSessionDisplay() { sessionEl.textContent = sessionCount; }
 function updateTotalTimeDisplay() { totalTimeEl.textContent = Math.floor(totalFocusTime); }
 
@@ -150,7 +169,8 @@ settingBtn.addEventListener("click", openSettingsModal);
 closeModalBtn.addEventListener("click", () => modal.classList.add("hidden"));
 saveSettingsBtn.addEventListener("click", saveSettings);
 
-// 初期起動
+// ===== 初期起動 =====
+resetDailyStats(); // 🔥 日付チェック＆リセット
 updateDisplay();
 updateModeDisplay();
 updateSessionDisplay();
