@@ -12,7 +12,7 @@ const WORK_IMAGE_PATH = "images/studying_cat.png";
 const BREAK_IMAGE_PATH = "images/sleeping_cat.png";
 
 // 音声ファイル（オプション）
-const alarmSound = new Audio("お知らせベル.mp3");
+const alarmSound = new Audio("bell.mp3");
 
 // ===== 保存データ読み込み =====
 let sessionCount = Number(localStorage.getItem("catPomodoro_sessionCount")) || 0;
